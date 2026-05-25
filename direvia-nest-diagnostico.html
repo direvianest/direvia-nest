@@ -831,12 +831,22 @@ ml('account', '2378183');
       <p class="trust-text">Dejame tu nombre y email para enviarte el diagnóstico completo. <strong>Solo te mando cosas que te sirven</strong> — sin spam, sin venta desesperada.</p>
     </div>
 
-    <div id="ml-form-container">
-      <div class="ml-embedded" data-form="6xokJq"></div>
+    <div class="form-group">
+      <label class="form-label">Tu nombre</label>
+      <input class="form-input" type="text" id="input-nombre" placeholder="¿Cómo te llamo?" oninput="checkForm()">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tu email</label>
+      <input class="form-input" type="email" id="input-email" placeholder="tu@email.com" oninput="checkForm()">
     </div>
 
+    <button class="btn-primary" id="btn-form" onclick="submitForm()" disabled style="width:100%; text-align:center; margin-top:16px;">Ver mi diagnóstico →</button>
     <p class="no-spam" style="margin-top:12px;">🔒 Sin spam. Solo tu diagnóstico y recursos para tu etapa.</p>
-  </div>
+
+    <!-- MailerLite hidden form for data capture -->
+    <div style="display:none;" id="ml-form-container">
+      <div class="ml-embedded" data-form="6xokJq"></div>
+    </div>
 
   <!-- SCREEN RESULT -->
   <div class="screen" id="screen-result">
@@ -949,6 +959,39 @@ function submitForm() {
   goTo('screen-result');
 }
 
+function checkForm() {
+  const nombre = document.getElementById('input-nombre').value.trim();
+  const email = document.getElementById('input-email').value.trim();
+  const valid = nombre.length > 1 && email.includes('@') && email.includes('.');
+  document.getElementById('btn-form').disabled = !valid;
+}
+
+function submitForm() {
+  const nombre = document.getElementById('input-nombre').value.trim();
+  const email = document.getElementById('input-email').value.trim();
+
+  // Mostrar resultado inmediatamente
+  showResult(nombre);
+  goTo('screen-result');
+
+  // Intentar llenar el formulario oculto de MailerLite en background
+  setTimeout(() => {
+    try {
+      const mlForm = document.querySelector('#ml-form-container .ml-embedded');
+      if (mlForm) {
+        const nameInput = mlForm.querySelector('input[name="fields[name]"]') || mlForm.querySelector('input[type="text"]');
+        const emailInput = mlForm.querySelector('input[name="fields[email]"]') || mlForm.querySelector('input[type="email"]');
+        const submitBtn = mlForm.querySelector('button[type="submit"]') || mlForm.querySelector('button');
+        if (nameInput) nameInput.value = nombre;
+        if (emailInput) emailInput.value = email;
+        if (submitBtn) submitBtn.click();
+      }
+    } catch(e) {
+      console.log('ML background submit:', e);
+    }
+  }, 800);
+}
+
 function showResult(nombre) {
   const etapa = answers.etapa;
   const tranca = answers.tranca;
@@ -1023,23 +1066,29 @@ function showResult(nombre) {
   });
 }
 
-// Escuchar cuando MailerLite confirma el envío del formulario
+function redirectToResult(nombre) {
+  const etapa = answers.etapa || 'otro';
+  const nombreEncoded = encodeURIComponent(nombre);
+  const baseUrl = 'direvia-nest-resultados.html';
+  return baseUrl + '?perfil=' + etapa + '&nombre=' + nombreEncoded;
+}
+
+// Escuchar cuando MailerLite confirma el envío
 document.addEventListener('DOMContentLoaded', function() {
   window.addEventListener('message', function(event) {
     if (event.data && event.data.type === 'ml-subscribe-success') {
-      const nombre = event.data.data && event.data.data.name ? event.data.data.name : 'vos';
+      const nombre = event.data.data && event.data.data.name ? event.data.data.name : '';
       showResult(nombre);
       goTo('screen-result');
     }
   });
 
-  // Alternativa: observar cambios en el DOM del formulario de MailerLite
   const observer = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutation) {
       mutation.addedNodes.forEach(function(node) {
         if (node.classList && node.classList.contains('ml-subscribe-success')) {
           const nameInput = document.querySelector('.ml-embedded input[name="fields[name]"]');
-          const nombre = nameInput ? nameInput.value : 'vos';
+          const nombre = nameInput ? nameInput.value : '';
           setTimeout(() => {
             showResult(nombre);
             goTo('screen-result');
