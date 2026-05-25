@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tu Diagnóstico — Direvia Nest</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --borgona: #9B4F6A;
+  --borgona-hover: #C47A95;
+  --rosa-palido: #F3E8EF;
+  --violeta: #7B5CBF;
+  --nude: #E8D5C4;
+  --offwhite: #FAF9F7;
+  --marron: #2C1A1A;
+  --texto-suave: #6B4A4A;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--offwhite); color: var(--marron); min-height: 100vh; }
+
+.header { width: 100%; padding: 20px 24px; display: flex; align-items: center; justify-content: center; border-bottom: 0.5px solid rgba(155,79,106,0.15); background: var(--offwhite); }
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-text { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--marron); }
+.logo-text span { font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.22em; color: var(--borgona); display: block; text-transform: uppercase; margin-top: -2px; }
+
+.container { max-width: 560px; margin: 0 auto; padding: 40px 24px 60px; }
+
+.perfil { display: none; animation: fadeIn 0.4s ease; }
+.perfil.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+.result-header { background: var(--marron); border-radius: 16px; padding: 28px 24px; margin-bottom: 24px; position: relative; overflow: hidden; }
+.result-header::before { content: ''; position: absolute; top: -30px; right: -30px; width: 120px; height: 120px; border: 1.5px solid rgba(196,122,149,0.2); border-radius: 50%; }
+.result-tag { font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--borgona-hover); margin-bottom: 8px; }
+.result-name { font-family: 'Playfair Display', serif; font-size: 22px; color: white; margin-bottom: 10px; line-height: 1.3; }
+.result-desc { font-size: 13px; color: rgba(250,249,247,0.75); line-height: 1.6; }
+.result-greeting { font-size: 13px; color: var(--borgona-hover); margin-bottom: 10px; font-weight: 500; }
+
+.email-notice { background: rgba(155,79,106,0.08); border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; display: flex; gap: 10px; align-items: center; font-size: 12px; color: var(--texto-suave); line-height: 1.5; }
+
+.tips-label { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--borgona); margin-bottom: 14px; }
+
+.tip-card { background: white; border: 0.5px solid rgba(155,79,106,0.12); border-radius: 12px; padding: 16px 18px; margin-bottom: 10px; display: flex; gap: 12px; }
+.tip-num { width: 24px; height: 24px; border-radius: 50%; background: var(--rosa-palido); color: var(--borgona); font-size: 11px; font-weight: 500; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+.tip-title { font-size: 13px; font-weight: 500; color: var(--marron); margin-bottom: 3px; }
+.tip-body { font-size: 12px; color: var(--texto-suave); line-height: 1.5; }
+
+.deco { display: flex; align-items: center; gap: 12px; margin: 20px 0; }
+.deco-line { flex: 1; height: 0.5px; background: rgba(155,79,106,0.15); }
+.deco-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(155,79,106,0.25); }
+
+.cta-box { background: linear-gradient(135deg, var(--rosa-palido) 0%, white 100%); border: 1px solid rgba(155,79,106,0.2); border-radius: 16px; padding: 24px; text-align: center; }
+.cta-title { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--marron); margin-bottom: 10px; line-height: 1.3; }
+.cta-body { font-size: 13px; color: var(--texto-suave); line-height: 1.6; margin-bottom: 20px; }
+.cta-btn { display: block; background: var(--borgona); color: white; text-decoration: none; border-radius: 100px; padding: 14px 32px; font-size: 14px; font-weight: 500; transition: all 0.2s; }
+.cta-btn:hover { background: #7D3D56; }
+.cta-sub { font-size: 11px; color: rgba(155,79,106,0.5); margin-top: 10px; }
+
+.not-found { text-align: center; padding: 60px 24px; }
+.not-found h2 { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--marron); margin-bottom: 12px; }
+.not-found p { font-size: 14px; color: var(--texto-suave); line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <svg width="36" height="20" viewBox="0 0 36 20" fill="none">
+      <path d="M3 17 Q18 3 33 17" stroke="#9B4F6A" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+    </svg>
+    <div class="logo-text">Direvia<span>NEST</span></div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- PERFIL 1: La que empieza de cero -->
+  <div class="perfil" id="perfil-cero">
+    <div class="result-header">
+      <p class="result-tag">Tu diagnóstico personalizado</p>
+      <p class="result-greeting" id="greeting-cero"></p>
+      <h1 class="result-name">Estás en el punto de partida. Y eso es exactamente donde empieza todo.</h1>
+      <p class="result-desc">Tenés conocimiento o una idea con potencial. Lo que te falta no es más información — es estructura para convertir eso en algo vendible y concreto.</p>
+    </div>
+    <div class="email-notice">📩 Este diagnóstico también te llegó por email para que lo tengas siempre a mano.</div>
+    <p class="tips-label">Tus próximos pasos concretos</p>
+    <div class="tip-card"><div class="tip-num">1</div><div><p class="tip-title">Primero, definí a quién le hablás</p><p class="tip-body">Antes de pensar en qué vender, necesitás saber para quién. Una persona concreta con un problema concreto. Sin eso, todo lo demás es ruido — aunque el producto sea bueno.</p></div></div>
+    <div class="tip-card"><div class="tip-num">2</div><div><p class="tip-title">Empezá con el producto más simple posible</p><p class="tip-body">No el curso enorme ni la membresía. Una guía, una sesión, un servicio puntual. Algo que puedas ofrecer esta semana para validar que funciona antes de invertir meses en crearlo.</p></div></div>
+    <div class="tip-card"><div class="tip-num">3</div><div><p class="tip-title">No esperes a tener todo listo</p><p class="tip-body">El momento perfecto no existe. Lo que existe es la primera venta, que te da más información que meses de planificación. Hecha es mejor que perfecta.</p></div></div>
+    <div class="tip-card"><div class="tip-num">4</div><div><p class="tip-title">Tu conocimiento vale más de lo que creés</p><p class="tip-body">Lo que para vos es obvio, para otra persona es revelador. No subestimes lo que sabés hacer — eso es exactamente lo que alguien está buscando hoy.</p></div></div>
+    <div class="deco"><div class="deco-line"></div><div class="deco-dot"></div><div class="deco-line"></div></div>
+    <div class="cta-box">
+      <h2 class="cta-title">¿Querés arrancar con un plan real?</h2>
+      <p class="cta-body">En 20 minutos te ayudo a clarificar qué podés vender, a quién y cómo — sin que tengas que inventar nada desde cero. Gratuito. Sin compromiso.</p>
+      <a href="https://calendly.com/direvia-nest/30min" class="cta-btn">Agendá tu consulta gratuita →</a>
+      <p class="cta-sub">20 min · Gratuito · Por videollamada</p>
+    </div>
+  </div>
+
+  <!-- PERFIL 2: La que tiene algo pero no vende -->
+  <div class="perfil" id="perfil-tiene-algo">
+    <div class="result-header">
+      <p class="result-tag">Tu diagnóstico personalizado</p>
+      <p class="result-greeting" id="greeting-tiene-algo"></p>
+      <h1 class="result-name">Ya tenés la base. Lo que falta es el sistema que hace que las ventas fluyan solas.</h1>
+      <p class="result-desc">Vender por inbox todo el tiempo es agotador y no escala. Tenés algo valioso — falta estructurarlo para que funcione sin que estés presente en cada venta.</p>
+    </div>
+    <div class="email-notice">📩 Este diagnóstico también te llegó por email para que lo tengas siempre a mano.</div>
+    <p class="tips-label">Tus próximos pasos concretos</p>
+    <div class="tip-card"><div class="tip-num">1</div><div><p class="tip-title">Sistematizá tu proceso de venta</p><p class="tip-body">Si cada venta requiere que vos expliques desde cero, estás repitiendo trabajo. Necesitás un mensaje claro que lo haga por vos: una landing, una bio, un carrusel que vende solo.</p></div></div>
+    <div class="tip-card"><div class="tip-num">2</div><div><p class="tip-title">Definí tu producto estrella</p><p class="tip-body">Enfocate en uno solo — el que más te piden, el que más disfrutás vender. Ser conocida por una cosa es más poderoso que tener diez opciones que confunden.</p></div></div>
+    <div class="tip-card"><div class="tip-num">3</div><div><p class="tip-title">Empezá a capturar datos</p><p class="tip-body">Cada persona que te escribe por inbox es un lead que podés perder. Necesitás un lugar donde guardarlos: email, un formulario, lo que sea — pero sistematizado.</p></div></div>
+    <div class="tip-card"><div class="tip-num">4</div><div><p class="tip-title">Revisá cómo estás comunicando lo que vendés</p><p class="tip-body">A veces el producto es bueno pero el mensaje no conecta. Tu cliente ideal tiene que entender en 3 segundos qué vendés, para quién es y qué cambia si lo compra.</p></div></div>
+    <div class="deco"><div class="deco-line"></div><div class="deco-dot"></div><div class="deco-line"></div></div>
+    <div class="cta-box">
+      <h2 class="cta-title">¿Querés que armemos el sistema juntas?</h2>
+      <p class="cta-body">En 20 minutos analizamos qué tenés, qué le falta y cuál es el siguiente paso para que dejes de depender del inbox y las ventas empiecen a fluir solas.</p>
+      <a href="https://calendly.com/direvia-nest/30min" class="cta-btn">Agendá tu consulta gratuita →</a>
+      <p class="cta-sub">20 min · Gratuito · Por videollamada</p>
+    </div>
+  </div>
+
+  <!-- PERFIL 3: La que vende pero no escala -->
+  <div class="perfil" id="perfil-escalar">
+    <div class="result-header">
+      <p class="result-tag">Tu diagnóstico personalizado</p>
+      <p class="result-greeting" id="greeting-escalar"></p>
+      <h1 class="result-name">Construiste algo que funciona. Ahora es momento de que funcione sin vos en el centro.</h1>
+      <p class="result-desc">El problema no es que hagas las cosas mal — es que el negocio depende de tu presencia constante. Escalar no es trabajar más. Es trabajar diferente.</p>
+    </div>
+    <div class="email-notice">📩 Este diagnóstico también te llegó por email para que lo tengas siempre a mano.</div>
+    <p class="tips-label">Tus próximos pasos concretos</p>
+    <div class="tip-card"><div class="tip-num">1</div><div><p class="tip-title">Identificá qué podés automatizar primero</p><p class="tip-body">Las respuestas repetidas, el proceso de venta, los recordatorios — todo eso puede correr solo. Cada hora que automatizás es una hora que recuperás para lo que importa.</p></div></div>
+    <div class="tip-card"><div class="tip-num">2</div><div><p class="tip-title">Creá un producto que venda mientras dormís</p><p class="tip-body">Un curso grabado, un ebook, un recurso digital. Algo que no requiera tu tiempo directo en cada venta y que escale sin límite de horas ni de energía.</p></div></div>
+    <div class="tip-card"><div class="tip-num">3</div><div><p class="tip-title">Construí un sistema de contenido que trabaje por vos</p><p class="tip-body">No publicar por publicar. Contenido con estrategia que atrae, educa y convierte — sin que tengas que estar presente las 24 horas respondiendo y explicando.</p></div></div>
+    <div class="tip-card"><div class="tip-num">4</div><div><p class="tip-title">Delimitá qué es tuyo y qué puede hacer otro</p><p class="tip-body">No todo necesita pasar por vos. Identificá qué tareas podés delegar, tercerizar o automatizar — eso es lo que abre espacio para crecer sin quemarte.</p></div></div>
+    <div class="deco"><div class="deco-line"></div><div class="deco-dot"></div><div class="deco-line"></div></div>
+    <div class="cta-box">
+      <h2 class="cta-title">¿Querés diseñar tu sistema de escala?</h2>
+      <p class="cta-body">En 20 minutos vemos exactamente dónde estás dejando dinero sobre la mesa y cómo recuperarlo sin trabajar más horas. Gratuito. Sin compromiso.</p>
+      <a href="https://calendly.com/direvia-nest/30min" class="cta-btn">Agendá tu consulta gratuita →</a>
+      <p class="cta-sub">20 min · Gratuito · Por videollamada</p>
+    </div>
+  </div>
+
+  <!-- PERFIL 4: Otro -->
+  <div class="perfil" id="perfil-otro">
+    <div class="result-header">
+      <p class="result-tag">Tu diagnóstico personalizado</p>
+      <p class="result-greeting" id="greeting-otro"></p>
+      <h1 class="result-name">Tu situación no entra en una sola caja — y eso no es un problema. Es exactamente por qué necesitás algo personalizado.</h1>
+      <p class="result-desc">Hay momentos en que el camino no es lineal. Lo que sí es universal: tener claridad sobre dónde estás y hacia dónde querés ir acelera todo lo demás.</p>
+    </div>
+    <div class="email-notice">📩 Este diagnóstico también te llegó por email para que lo tengas siempre a mano.</div>
+    <p class="tips-label">Mientras tanto, esto le sirve a cualquier etapa</p>
+    <div class="tip-card"><div class="tip-num">1</div><div><p class="tip-title">Empezá por lo más urgente, no por lo más interesante</p><p class="tip-body">No todo tiene que resolverse a la vez. Identificá cuál es el problema que, si lo resolvieras esta semana, cambiaría todo lo demás. Ese es tu primer paso.</p></div></div>
+    <div class="tip-card"><div class="tip-num">2</div><div><p class="tip-title">La claridad se construye, no aparece sola</p><p class="tip-body">El caos que sentís no es una señal de que estás equivocada. Es una señal de que tenés más potencial del que estás usando con estructura. La confusión es el punto de partida, no el problema.</p></div></div>
+    <div class="tip-card"><div class="tip-num">3</div><div><p class="tip-title">No caminés sola si podés caminar acompañada</p><p class="tip-body">A veces una conversación de 20 minutos da más claridad que meses de dar vueltas sola. No porque la otra persona sepa más — sino porque te ayuda a ordenar lo que ya sabés.</p></div></div>
+    <div class="deco"><div class="deco-line"></div><div class="deco-dot"></div><div class="deco-line"></div></div>
+    <div class="cta-box">
+      <h2 class="cta-title">Hablemos. Tu caso merece una mirada personalizada.</h2>
+      <p class="cta-body">Contame tu situación y vemos juntas cuál es el mejor camino para vos específicamente. Sin fórmulas genéricas.</p>
+      <a href="https://calendly.com/direvia-nest/30min" class="cta-btn">Agendá tu consulta gratuita →</a>
+      <p class="cta-sub">20 min · Gratuito · Por videollamada</p>
+    </div>
+  </div>
+
+  <!-- Sin perfil -->
+  <div class="perfil active" id="perfil-default">
+    <div class="not-found">
+      <h2>Bienvenida a Direvia Nest 🤍</h2>
+      <p>Para ver tu diagnóstico personalizado, completá el formulario en nuestra web.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const perfiles = {
+  'cero': 'perfil-cero',
+  'tiene-algo': 'perfil-tiene-algo',
+  'escalar': 'perfil-escalar',
+  'otro': 'perfil-otro'
+};
+
+function init() {
+  const params = new URLSearchParams(window.location.search);
+  const perfil = params.get('perfil');
+  const nombre = params.get('nombre') || '';
+
+  if (perfil && perfiles[perfil]) {
+    document.getElementById('perfil-default').classList.remove('active');
+    document.getElementById(perfiles[perfil]).classList.add('active');
+
+    const greetingId = 'greeting-' + perfil;
+    const greetingEl = document.getElementById(greetingId);
+    if (greetingEl && nombre) {
+      greetingEl.textContent = 'Hola ' + decodeURIComponent(nombre) + ' 🤍';
+    }
+
+    document.title = 'Tu diagnóstico — Direvia Nest';
+  }
+}
+
+init();
+</script>
+</body>
+</html>
