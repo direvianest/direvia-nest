@@ -840,7 +840,7 @@ ml('account', '2378183');
       <input class="form-input" type="email" id="input-email" placeholder="tu@email.com" oninput="checkForm()">
     </div>
 
-    <button class="btn-primary" id="btn-form" onclick="submitForm()" disabled style="width:100%; text-align:center; margin-top:16px;">Ver mi diagnóstico →</button>
+    <button class="btn-primary" id="btn-form" onclick="submitForm()" style="width:100%; text-align:center; margin-top:16px;">Ver mi diagnóstico →</button>
     <p class="no-spam" style="margin-top:12px;">🔒 Sin spam. Solo tu diagnóstico y recursos para tu etapa.</p>
 
     <!-- MailerLite hidden form for data capture -->
@@ -940,6 +940,15 @@ function checkForm() {
 function submitForm() {
   const nombre = document.getElementById('input-nombre').value.trim();
   const email = document.getElementById('input-email').value.trim();
+
+  if (!nombre || nombre.length < 2) {
+    alert('Por favor ingresá tu nombre');
+    return;
+  }
+  if (!email || !email.includes('@')) {
+    alert('Por favor ingresá un email válido');
+    return;
+  }
 
   // Mostrar resultado inmediatamente
   showResult(nombre);
