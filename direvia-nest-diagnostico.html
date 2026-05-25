@@ -929,35 +929,6 @@ function updatePreview() {
   document.getElementById('result-preview-text').textContent = profiles[etapa] || 'Tu perfil único';
 }
 
-function checkForm() {
-  const nombre = document.getElementById('input-nombre').value.trim();
-  const email = document.getElementById('input-email').value.trim();
-  const valid = nombre.length > 1 && email.includes('@') && email.includes('.');
-  document.getElementById('btn-form').disabled = !valid;
-}
-
-function submitForm() {
-  const nombre = document.getElementById('input-nombre').value.trim();
-  const email = document.getElementById('input-email').value.trim();
-
-  const lead = {
-    nombre,
-    email,
-    fecha: new Date().toLocaleString('es-UY'),
-    etapa: answers.etapa || '',
-    etapa_otro: answers['etapa-otro'] || '',
-    tranca: answers.tranca || '',
-    tranca_otro: answers['tranca-otro'] || '',
-    tiempo: answers.tiempo || '',
-    objetivo: answers.objetivo || ''
-  };
-
-  leads.push(lead);
-  console.log('LEAD CAPTURADO:', JSON.stringify(lead, null, 2));
-
-  showResult(nombre);
-  goTo('screen-result');
-}
 
 function checkForm() {
   const nombre = document.getElementById('input-nombre').value.trim();
