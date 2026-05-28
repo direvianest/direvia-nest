@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico — Direvia Nest</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script>
+(function(w,d,e,u,f,l,n){w[f]=w[f]||function(){(w[f].q=w[f].q||[])
+.push(arguments);},l=d.createElement(e),l.async=1,l.src=u,
+n=d.getElementsByTagName(e)[0],n.parentNode.insertBefore(l,n);})
+(window,document,'script','https://assets.mailerlite.com/js/universal.js','ml');
+ml('account', '2378183');
+</script>
+<style>
+:root {
+  --borgona: #9B4F6A;
+  --borgona-hover: #C47A95;
+  --rosa-palido: #F3E8EF;
+  --offwhite: #FAF9F7;
+  --marron: #2C1A1A;
+  --texto-suave: #6B4A4A;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--offwhite); color: var(--marron); min-height: 100vh; }
+
+.header { padding: 20px 24px; display: flex; align-items: center; justify-content: center; border-bottom: 0.5px solid rgba(155,79,106,0.15); }
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-text { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--marron); }
+.logo-text span { font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.22em; color: var(--borgona); display: block; text-transform: uppercase; margin-top: -2px; }
+
+.container { max-width: 560px; margin: 0 auto; padding: 40px 24px 60px; }
+
+.screen { display: none; }
+.screen.active { display: block; }
+
+.progress-wrap { margin-bottom: 32px; }
+.progress-info { display: flex; justify-content: space-between; font-size: 12px; color: var(--texto-suave); margin-bottom: 8px; font-weight: 500; }
+.progress-bar { height: 3px; background: rgba(155,79,106,0.15); border-radius: 100px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--borgona); border-radius: 100px; transition: width 0.5s ease; }
+
+.question-label { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--borgona); margin-bottom: 12px; }
+.question-text { font-family: 'Playfair Display', serif; font-size: 26px; line-height: 1.35; color: var(--marron); margin-bottom: 8px; }
+.question-sub { font-size: 14px; color: var(--texto-suave); line-height: 1.6; margin-bottom: 28px; }
+
+.options { display: flex; flex-direction: column; gap: 10px; }
+.option-btn { background: white; border: 1px solid rgba(155,79,106,0.2); border-radius: 12px; padding: 16px 18px; text-align: left; cursor: pointer; display: flex; align-items: flex-start; gap: 12px; font-family: 'DM Sans', sans-serif; }
+.option-btn:active { border-color: var(--borgona); background: var(--rosa-palido); }
+.option-btn.selected { border-color: var(--borgona); background: var(--rosa-palido); }
+.option-icon { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid rgba(155,79,106,0.3); flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; }
+.option-btn.selected .option-icon { background: var(--borgona); border-color: var(--borgona); }
+.option-btn.selected .option-icon::after { content: ''; width: 6px; height: 6px; background: white; border-radius: 50%; }
+.option-title { font-size: 14px; font-weight: 500; color: var(--marron); line-height: 1.3; }
+.option-desc { font-size: 12px; color: var(--texto-suave); margin-top: 3px; }
+
+.otro-area { margin-top: 12px; display: none; }
+.otro-area.visible { display: block; }
+.otro-area textarea { width: 100%; border: 1px solid rgba(155,79,106,0.25); border-radius: 10px; padding: 12px 14px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--marron); background: white; resize: none; outline: none; min-height: 80px; }
+
+.btn-primary { background: var(--borgona); color: white; border: none; border-radius: 100px; padding: 14px 28px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 24px; display: inline-block; opacity: 0.4; pointer-events: none; }
+.btn-primary.enabled { opacity: 1; pointer-events: auto; }
+.btn-primary.always { opacity: 1; pointer-events: auto; }
+
+.trust-block { background: white; border: 0.5px solid rgba(155,79,106,0.12); border-radius: 14px; padding: 16px 18px; display: flex; gap: 12px; align-items: flex-start; margin-bottom: 24px; }
+.trust-photo { width: 44px; height: 44px; border-radius: 50%; background: var(--rosa-palido); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 18px; color: var(--borgona); }
+.trust-text { font-size: 13px; color: var(--texto-suave); line-height: 1.55; }
+.trust-text strong { color: var(--marron); font-weight: 500; }
+
+.intro-badge { display: inline-block; background: var(--rosa-palido); color: var(--borgona); font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; padding: 6px 14px; border-radius: 100px; margin-bottom: 20px; }
+.intro-title { font-family: 'Playfair Display', serif; font-size: 32px; line-height: 1.2; color: var(--marron); margin-bottom: 16px; }
+.intro-title em { font-style: italic; color: var(--borgona); }
+.intro-body { font-size: 15px; color: var(--texto-suave); line-height: 1.7; margin-bottom: 24px; }
+.intro-list { list-style: none; margin-bottom: 32px; }
+.intro-list li { font-size: 13px; color: var(--texto-suave); padding: 6px 0; display: flex; gap: 8px; }
+.intro-list li::before { content: '✦'; color: var(--borgona); font-size: 10px; margin-top: 4px; flex-shrink: 0; }
+
+.form-group { margin-bottom: 16px; }
+.form-label { font-size: 12px; font-weight: 500; color: var(--texto-suave); margin-bottom: 6px; display: block; }
+.form-input { width: 100%; border: 1px solid rgba(155,79,106,0.25); border-radius: 10px; padding: 12px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--marron); background: white; outline: none; }
+.form-input:focus { border-color: var(--borgona); }
+
+.no-spam { font-size: 11px; color: rgba(155,79,106,0.5); margin-top: 8px; text-align: center; }
+
+.result-preview { background: var(--rosa-palido); border-radius: 12px; padding: 16px 18px; margin-bottom: 24px; border-left: 3px solid var(--borgona); }
+.result-preview-label { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--borgona); margin-bottom: 6px; }
+.result-preview-text { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--marron); }
+
+/* RESULTADO */
+.result-header { background: var(--marron); border-radius: 16px; padding: 28px 24px; margin-bottom: 24px; }
+.result-tag { font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--borgona-hover); margin-bottom: 8px; }
+.result-greeting { font-size: 14px; color: var(--borgona-hover); margin-bottom: 8px; font-weight: 500; }
+.result-name { font-family: 'Playfair Display', serif; font-size: 20px; color: white; margin-bottom: 10px; line-height: 1.3; }
+.result-desc { font-size: 13px; color: rgba(250,249,247,0.75); line-height: 1.6; }
+
+.email-notice { background: rgba(155,79,106,0.08); border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; display: flex; gap: 10px; align-items: center; font-size: 12px; color: var(--texto-suave); line-height: 1.5; }
+
+.tips-label { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--borgona); margin-bottom: 14px; margin-top: 4px; }
+.tip-card { background: white; border: 0.5px solid rgba(155,79,106,0.12); border-radius: 12px; padding: 16px 18px; margin-bottom: 10px; display: flex; gap: 12px; }
+.tip-num { width: 24px; height: 24px; border-radius: 50%; background: var(--rosa-palido); color: var(--borgona); font-size: 11px; font-weight: 500; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+.tip-title { font-size: 13px; font-weight: 500; color: var(--marron); margin-bottom: 3px; }
+.tip-body { font-size: 12px; color: var(--texto-suave); line-height: 1.5; }
+
+.deco { display: flex; align-items: center; gap: 12px; margin: 20px 0; }
+.deco-line { flex: 1; height: 0.5px; background: rgba(155,79,106,0.15); }
+.deco-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(155,79,106,0.25); }
+
+.cta-box { background: linear-gradient(135deg, var(--rosa-palido) 0%, white 100%); border: 1px solid rgba(155,79,106,0.2); border-radius: 16px; padding: 24px; text-align: center; }
+.cta-title { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--marron); margin-bottom: 10px; line-height: 1.3; }
+.cta-body { font-size: 13px; color: var(--texto-suave); line-height: 1.6; margin-bottom: 20px; }
+.cta-btn { display: block; background: var(--borgona); color: white; text-decoration: none; border-radius: 100px; padding: 14px 32px; font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif; }
+.cta-sub { font-size: 11px; color: rgba(155,79,106,0.5); margin-top: 10px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <svg width="36" height="20" viewBox="0 0 36 20" fill="none">
+      <path d="M3 17 Q18 3 33 17" stroke="#9B4F6A" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+    </svg>
+    <div class="logo-text">Direvia<span>NEST</span></div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- INTRO -->
+  <div class="screen active" id="s-intro">
+    <span class="intro-badge">Diagnóstico gratuito</span>
+    <h1 class="intro-title">¿En qué etapa está <em>tu negocio digital</em>?</h1>
+    <p class="intro-body">En menos de 2 minutos te decimos exactamente dónde estás, qué te está frenando y cuál es tu próximo paso concreto.</p>
+    <div class="trust-block">
+      <div class="trust-photo">F</div>
+      <p class="trust-text"><strong>Soy Fio</strong>, especialista en marketing digital y fundadora de Direvia Nest. Armé este diagnóstico para que llegues a tu primera consulta con claridad real.</p>
+    </div>
+    <ul class="intro-list">
+      <li>4 preguntas, cada una con propósito</li>
+      <li>Resultado personalizado según tu etapa real</li>
+      <li>Tips concretos que podés aplicar hoy</li>
+      <li>Sin spam. Solo lo que te sirve.</li>
+    </ul>
+    <button class="btn-primary always" onclick="mostrar('s-q1')">Empezar mi diagnóstico →</button>
+  </div>
+
+  <!-- Q1 -->
+  <div class="screen" id="s-q1">
+    <div class="progress-wrap">
+      <div class="progress-info"><span>Pregunta 1 de 4</span><span>25%</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:25%"></div></div>
+    </div>
+    <p class="question-label">Tu punto de partida</p>
+    <h2 class="question-text">¿Cómo describirías tu situación hoy?</h2>
+    <p class="question-sub">Elegí la que más se acerca a tu realidad.</p>
+    <div class="options">
+      <button class="option-btn" onclick="elegir(this,'etapa','cero','btn-q1')">
+        <div class="option-icon"></div>
+        <div><p class="option-title">Tengo una idea o algo que sé hacer, pero no sé cómo convertirlo en negocio</p><p class="option-desc">Querés empezar pero no tenés claro el primer paso</p></div>
+      </button>
+      <button class="option-btn" onclick="elegir(this,'etapa','tiene-algo','btn-q1')">
+        <div class="option-icon"></div>
+        <div><p class="option-title">Tengo algo armado pero las ventas son inconsistentes o dependen del inbox</p><p class="option-desc">Vendés, pero sin sistema ni previsibilidad</p></div>
+      </button>
+      <button class="option-btn" onclick="elegir(this,'etapa','escalar','btn-q1')">
+        <div class="option-icon"></div>
+        <div><p class="option-title">Tengo un negocio que funciona, pero todo depende de mí y no puedo parar</p><p class="option-desc">Querés escalar sin quemarte</p></div>
+      </button>
+      <button class="option-btn" onclick="elegir(this,'etapa','otro','btn-q1'); verOtro('otro-q1')">
+        <div class="option-icon"></div>
+        <div><p class="option-title">Otro</p><p class="option-desc">Contame con tus palabras</p></div>
+      </button>
+    </div>
+    <div class="otro-area" id="otro-q1"><textarea placeholder="Contame tu situación..." oninput="resp['etapa-otro']=this.value"></textarea></div>
+    <button class="btn-primary" id="btn-q1" onclick="mostrar('s-q2')">Continuar →</button>
+  </div>
+
+  <!-- Q2 -->
+  <div class="screen" id="s-q2">
+    <div class="progress-wrap">
+      <div class="progress-info"><span>Pregunta 2 de 4</span><span>50%</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:50%"></div></div>
+    </div>
+    <p class="question-label">Lo que más pesa</p>
+    <h2 class="question-text">¿Qué es lo que más te frena ahora mismo?</h2>
+    <p class="question-sub">Elegí la que más resuena.</p>
+    <div class="options">
+      <button class="option-btn" onclick="elegir(this,'tranca','no-se-que-vender','btn-q2')">
+        <div class="option-icon"></div>
+        <div><p class="option-title">No sé qué vender ni cómo presentarlo</p><p class="option-desc">Tengo ideas pero ninguna se siente clara</p></div>
+      </button>
+      <button class="option-btn" onclick="elegir(this,'tranca','no-llego','btn-q2')">
+        <div class="option-icon"></div>
+        <div><p class="option-title">No llego a la gente correcta o no sé cómo comunicarme</p><p class="option-desc">Mi producto existe pero no sé cómo hacerlo visible</p></div>
+      </button>
+      <button class="option-btn" onclick="elegir(this,'tranca','no-tengo-tiempo','btn-q2')">
+        <div class="option-icon"></div>
+        <div><p class="option-title">No tengo tiempo — entre el trabajo, la familia y todo lo demás</p><p class="option-desc">Quiero pero no encuentro el cómo</p></div>
+      </button>
+      <button class="option-btn" onclick="elegir(this,'tranca','no-se-por-donde','btn-q2')">
+        <div class="option-icon"></div>
+        <div><p class="option-title">No sé por dónde empezar — hay demasiada información</p><p class="option-desc">Consumo contenido pero no avanzo</p></div>
+      </button>
+      <button class="option-btn" onclick="elegir(this,'tranca','otro','btn-q2'); verOtro('otro-q2')">
+        <div class="option-icon"></div>
+        <div><p class="option-title">Otro</p><p class="option-desc">Contame con tus palabras</p></div>
+      </button>
+    </div>
+    <div class="otro-area" id="otro-q2"><textarea placeholder="¿Qué es lo que más te frena?" oninput="resp['tranca-otro']=this.value"></textarea></div>
+    <button class="btn-primary" id="btn-q2" onclick="mostrar('s-q3')">Continuar →</button>
+  </div>
+
+  <!-- Q3 -->
+  <div class="screen" id="s-q3">
+    <div class="progress-wrap">
+      <div class="progress-info"><span>Pregunta 3 de 4</span><span>75%</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:75%"></div></div>
+    </div>
+    <p class="question-label">Tu realidad práctica</p>
+    <h2 class="question-text">¿Cuánto tiempo real podés dedicarle por semana?</h2>
+    <p class="question-sub">Siendo honesta. Queremos darte recomendaciones que puedas aplicar de verdad.</p>
+    <div class="options">
+      <button class="option-btn" onclick="elegir(this,'tiempo','poco','btn-q3')">
+        <div class="option-icon"></div>
+        <div><p class="option-title">Menos de 5 horas</p><p class="option-desc">Robado entre el trabajo, las noches o los fines de semana</p></div>
+      </button>
+      <button class="option-btn" onclick="elegir(this,'tiempo','medio','btn-q3')">
+        <div class="option-icon"></div>
+        <div><p class="option-title">Entre 5 y 15 horas</p><p class="option-desc">Tengo algunos bloques organizados</p></div>
+      </button>
+      <button class="option-btn" onclick="elegir(this,'tiempo','bastante','btn-q3')">
+        <div class="option-icon"></div>
+        <div><p class="option-title">Más de 15 horas</p><p class="option-desc">Puedo dedicarle tiempo real y sostenido</p></div>
+      </button>
+    </div>
+    <button class="btn-primary" id="btn-q3" onclick="mostrar('s-q4')">Continuar →</button>
+  </div>
+
+  <!-- Q4 -->
+  <div class="screen" id="s-q4">
+    <div class="progress-wrap">
+      <div class="progress-info"><span>Pregunta 4 de 4</span><span>100%</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+    </div>
+    <p class="question-label">Lo que buscás</p>
+    <h2 class="question-text">¿Qué cambio querés ver en los próximos 3 meses?</h2>
+    <p class="question-sub">Lo que más te importa lograr ahora mismo.</p>
+    <div class="options">
+      <button class="option-btn" onclick="elegir(this,'objetivo','primera-venta','btn-q4')">
+        <div class="option-icon"></div>
+        <div><p class="option-title">Hacer mi primera venta online</p><p class="option-desc">Arrancar de cero y validar que esto funciona</p></div>
+      </button>
+      <button class="option-btn" onclick="elegir(this,'objetivo','mas-consistente','btn-q4')">
+        <div class="option-icon"></div>
+        <div><p class="option-title">Vender de forma más consistente y con menos esfuerzo</p><p class="option-desc">Que no todo dependa de mí publicando todo el tiempo</p></div>
+      </button>
+      <button class="option-btn" onclick="elegir(this,'objetivo','escalar','btn-q4')">
+        <div class="option-icon"></div>
+        <div><p class="option-title">Escalar lo que ya tengo sin quemarme</p><p class="option-desc">Crecer con estructura real, no trabajando más horas</p></div>
+      </button>
+      <button class="option-btn" onclick="elegir(this,'objetivo','claridad','btn-q4')">
+        <div class="option-icon"></div>
+        <div><p class="option-title">Tener claridad de qué hacer primero</p><p class="option-desc">Salir del ruido y tener un plan concreto</p></div>
+      </button>
+    </div>
+    <button class="btn-primary" id="btn-q4" onclick="mostrar('s-form')">Ver mi diagnóstico →</button>
+  </div>
+
+  <!-- FORM -->
+  <div class="screen" id="s-form">
+    <p class="question-label" style="text-align:center">Tu diagnóstico está listo</p>
+    <h2 class="question-text" style="font-size:22px; text-align:center; margin-bottom:20px;">Un segundo antes de verlo 🤍</h2>
+    <div class="result-preview">
+      <p class="result-preview-label">Tu perfil detectado</p>
+      <p class="result-preview-text" id="preview-text">Analizando tus respuestas...</p>
+    </div>
+    <div class="trust-block">
+      <div class="trust-photo">F</div>
+      <p class="trust-text"><strong>Soy Fio</strong> — dejame tu nombre y email para poder acompañarte mejor después de tu diagnóstico. <strong>Solo te escribo cosas que te sirven.</strong></p>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tu nombre</label>
+      <input class="form-input" type="text" id="inp-nombre" placeholder="¿Cómo te llamo?">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tu email</label>
+      <input class="form-input" type="email" id="inp-email" placeholder="tu@email.com">
+    </div>
+    <button class="btn-primary always" style="width:100%; text-align:center;" onclick="enviar()">Ver mi diagnóstico completo →</button>
+    <p class="no-spam">🔒 Sin spam. Solo tu diagnóstico y recursos para tu etapa.</p>
+    <div style="display:none"><div class="ml-embedded" data-form="6xokJq"></div></div>
+  </div>
+
+  <!-- RESULTADO -->
+  <div class="screen" id="s-result">
+    <div class="result-header">
+      <p class="result-tag">Tu diagnóstico personalizado</p>
+      <p class="result-greeting" id="r-greeting"></p>
+      <h2 class="result-name" id="r-title"></h2>
+      <p class="result-desc" id="r-desc"></p>
+    </div>
+    <div class="email-notice">
+      <span style="font-size:18px">📸</span>
+      <span>Guardá una captura de pantalla de tu diagnóstico para tenerlo siempre a mano.</span>
+    </div>
+    <p class="tips-label">Tus próximos pasos concretos</p>
+    <div id="r-tips"></div>
+    <div class="deco"><div class="deco-line"></div><div class="deco-dot"></div><div class="deco-line"></div></div>
+    <div class="cta-box">
+      <h3 class="cta-title" id="r-cta-title"></h3>
+      <p class="cta-body" id="r-cta-body"></p>
+      <a href="https://calendly.com/direvia-nest/30min" target="_blank" class="cta-btn">Agendá tu consulta gratuita →</a>
+      <p class="cta-sub">20 min · Gratuito · Por videollamada</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var resp = {};
+
+function mostrar(id) {
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  if (id === 's-form') actualizarPreview();
+}
+
+function elegir(btn, clave, valor, btnId) {
+  document.querySelectorAll('.option-btn').forEach(function(b){
+    if (b.closest('#' + btn.closest('.screen').id)) b.classList.remove('selected');
+  });
+  btn.classList.add('selected');
+  resp[clave] = valor;
+  var b = document.getElementById(btnId);
+  if (b) b.classList.add('enabled');
+}
+
+function verOtro(id) {
+  document.getElementById(id).classList.toggle('visible');
+}
+
+function actualizarPreview() {
+  var perfiles = {
+    'cero': 'La que empieza con una idea o habilidad',
+    'tiene-algo': 'La que tiene algo armado pero las ventas no fluyen',
+    'escalar': 'La que vende pero no puede escalar',
+    'otro': 'Tu situación es única'
+  };
+  var el = document.getElementById('preview-text');
+  if (el) el.textContent = perfiles[resp['etapa']] || 'Tu perfil único';
+}
+
+function enviar() {
+  var nombre = document.getElementById('inp-nombre').value.trim();
+  var email = document.getElementById('inp-email').value.trim();
+
+  if (!nombre || nombre.length < 2) {
+    alert('Por favor ingresá tu nombre');
+    return;
+  }
+  if (!email || email.indexOf('@') < 0) {
+    alert('Por favor ingresá un email válido');
+    return;
+  }
+
+  mostrarResultado(nombre);
+  mostrar('s-result');
+}
+
+function mostrarResultado(nombre) {
+  document.getElementById('r-greeting').textContent = 'Hola ' + nombre + ' 🤍';
+
+  var etapa = resp['etapa'] || 'otro';
+  var datos = {
+    'cero': {
+      titulo: 'Estás en el punto de partida. Y eso es exactamente donde empieza todo.',
+      desc: 'Tenés conocimiento o una idea con potencial. Lo que te falta no es más información — es estructura para convertir eso en algo vendible y concreto.',
+      tips: [
+        {t:'Primero, definí a quién le hablás', b:'Antes de pensar en qué vender, necesitás saber para quién. Una persona concreta con un problema concreto. Sin eso, todo lo demás es ruido.'},
+        {t:'Empezá con el producto más simple posible', b:'No el curso enorme ni la membresía. Una guía, una sesión, un servicio puntual. Algo que puedas ofrecer esta semana para validar que funciona.'},
+        {t:'No esperes a tener todo listo', b:'El momento perfecto no existe. Lo que existe es la primera venta, que te da más información que meses de planificación.'}
+      ],
+      ctaT:'¿Querés arrancar con un plan real?',
+      ctaB:'En 20 minutos te ayudo a clarificar qué podés vender, a quién y cómo — sin que tengas que inventar nada desde cero.'
+    },
+    'tiene-algo': {
+      titulo: 'Ya tenés la base. Lo que falta es el sistema que hace que las ventas fluyan solas.',
+      desc: 'Vender por inbox todo el tiempo es agotador y no escala. Tenés algo valioso — falta estructurarlo para que funcione sin que estés en cada venta.',
+      tips: [
+        {t:'Sistematizá tu proceso de venta', b:'Si cada venta requiere que vos expliques desde cero, estás repitiendo trabajo. Necesitás un mensaje claro que lo haga por vos.'},
+        {t:'Definí tu producto estrella', b:'Enfocate en uno solo — el que más te piden, el que más disfrutás vender. Ser conocida por una cosa es más poderoso que tener diez opciones.'},
+        {t:'Empezá a capturar datos', b:'Cada persona que te escribe por inbox es un lead que podés perder. Necesitás un lugar donde guardarlos sistematizado.'}
+      ],
+      ctaT:'¿Querés que armemos el sistema juntas?',
+      ctaB:'En 20 minutos analizamos qué tenés, qué le falta y cuál es el siguiente paso para que dejes de depender del inbox.'
+    },
+    'escalar': {
+      titulo: 'Construiste algo que funciona. Ahora es momento de que funcione sin vos en el centro.',
+      desc: 'El problema no es que hagas las cosas mal — es que el negocio depende de tu presencia constante. Escalar no es trabajar más. Es trabajar diferente.',
+      tips: [
+        {t:'Identificá qué podés automatizar primero', b:'Las respuestas repetidas, el proceso de venta, los recordatorios — todo eso puede correr solo. Cada hora que automatizás es una hora que recuperás.'},
+        {t:'Creá un producto que venda mientras dormís', b:'Un curso grabado, un ebook, un recurso digital. Algo que no requiera tu tiempo directo en cada venta.'},
+        {t:'Construí un sistema de contenido que trabaje por vos', b:'No publicar por publicar. Contenido con estrategia que atrae, educa y convierte sin que tengas que estar presente las 24 horas.'}
+      ],
+      ctaT:'¿Querés diseñar tu sistema de escala?',
+      ctaB:'En 20 minutos vemos exactamente dónde estás dejando dinero sobre la mesa y cómo recuperarlo sin trabajar más horas.'
+    },
+    'otro': {
+      titulo: 'Tu situación no entra en una sola caja — y eso es exactamente por qué necesitás algo personalizado.',
+      desc: 'Hay momentos en que el camino no es lineal. Lo que sí es universal: tener claridad sobre dónde estás y hacia dónde querés ir acelera todo lo demás.',
+      tips: [
+        {t:'Empezá por lo más urgente, no por lo más interesante', b:'Identificá cuál es el problema que, si lo resolvieras esta semana, cambiaría todo lo demás.'},
+        {t:'La claridad se construye, no aparece sola', b:'El caos que sentís no es una señal de que estás equivocada. Es una señal de que tenés más potencial del que estás usando con estructura.'},
+        {t:'No caminés sola si podés caminar acompañada', b:'A veces una conversación de 20 minutos da más claridad que meses de dar vueltas sola.'}
+      ],
+      ctaT:'Hablemos. Tu caso merece una mirada personalizada.',
+      ctaB:'Contame tu situación y vemos juntas cuál es el mejor camino para vos específicamente.'
+    }
+  };
+
+  var d = datos[etapa] || datos['otro'];
+  document.getElementById('r-title').textContent = d.titulo;
+  document.getElementById('r-desc').textContent = d.desc;
+  document.getElementById('r-cta-title').textContent = d.ctaT;
+  document.getElementById('r-cta-body').textContent = d.ctaB;
+
+  var tipsEl = document.getElementById('r-tips');
+  tipsEl.innerHTML = '';
+  d.tips.forEach(function(tip, i) {
+    tipsEl.innerHTML += '<div class="tip-card"><div class="tip-num">' + (i+1) + '</div><div><p class="tip-title">' + tip.t + '</p><p class="tip-body">' + tip.b + '</p></div></div>';
+  });
+}
+</script>
+</body>
+</html>
